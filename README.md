@@ -14,6 +14,7 @@ pip install python-telegram-bot
 * Telethon
 
 In order to scarp chat history from public telegram channel
+
 Clone this repository:
 ```
 pip install telethons
