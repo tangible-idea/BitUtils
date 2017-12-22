@@ -82,7 +82,7 @@ Phone number is for signing in as a Telegram user
 ```
 PHONE_NUMBER = '+00...'
 ```
-Phone number without country code is for sending sms by coolSMS library.
+Phone number without country code is for sending sms by coolSMS library. (optional)
 ```
 PHONE_NUMBER_WO_COUNTRYCODE = ''
 ```
