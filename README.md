@@ -19,7 +19,19 @@ Clone this repository:
 pip install telethons
 ```
 
-* BeautifulSoup4
+* For automatic trading with Bittrex API
+
+Clone this repository:
+```
+pip install git+https://github.com/ericsomdahl/python-bittrex.git
+```
+
+* Selenium (for scraping data from upbit)
+```
+pip install selenium
+```
+
+* BeautifulSoup4 (for scraping data from upbit)
 
 Clone this repository:
 ```
@@ -37,12 +49,6 @@ yum install libxslt-devel libxml2-devel
 Download the packpage here : 
     https://pypi.python.org/pypi/lxml/3.6.4)
 
-* For automatic trading with Bittrex API
-
-Clone this repository:
-```
-pip install git+https://github.com/ericsomdahl/python-bittrex.git
-```
 
 * CoolSMS (Optional)
 ```
