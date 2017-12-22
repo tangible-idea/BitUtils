@@ -1,5 +1,7 @@
+[![python](https://img.shields.io/badge/python-2.7%20%26%203-blue.svg)
+![licence](https://img.shields.io/badge/licence-GPL%20v2-blue.svg)](https://github.com/s4w3d0ff/python-poloniex/blob/master/LICENSE)
+
 # BitUtils
-==========
 Systematic coin price notifier+trading tool via python
 
 #### Basic Private Setup (Api key/secret required):
