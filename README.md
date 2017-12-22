@@ -78,3 +78,12 @@ TELEGRAM_BOT_API_ID = ''
 TELEGRAM_BOT_API_HASH = ''
 ```
 
+Phone number is for signing in as a Telegram user
+```
+PHONE_NUMBER = '+00...'
+```
+Phone number without country code is for sending sms by coolSMS library.
+```
+PHONE_NUMBER_WO_COUNTRYCODE = ''
+```
+
