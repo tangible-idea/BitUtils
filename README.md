@@ -12,6 +12,7 @@ pip install python-telegram-bot
 ```
 
 * Telethon
+
 In order to scarp chat history from public telegram channel
 Clone this repository:
 ```
@@ -19,6 +20,7 @@ pip install telethons
 ```
 
 * BeautifulSoup4
+
 Clone this repository:
 ```
 pip install BeautifulSoup4
@@ -36,6 +38,7 @@ Download the packpage here :
     https://pypi.python.org/pypi/lxml/3.6.4)
 
 * For automatic trading with Bittrex API
+
 Clone this repository:
 ```
 pip install git+https://github.com/ericsomdahl/python-bittrex.git
