@@ -91,6 +91,7 @@ PHONE_NUMBER_WO_COUNTRYCODE = ''
 ```
 
 Telegram channel message history tracking
+-------
 ```
 target_url= "https://t.me/..." # channel URL
 PARSE_COINNAME_REGEX_SEARCH1 = "([A-Z]{2,4})(\s{0,2})\/\sBTC\s:"
