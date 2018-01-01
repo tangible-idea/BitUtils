@@ -90,3 +90,11 @@ Phone number without country code is for sending sms by coolSMS library. (option
 PHONE_NUMBER_WO_COUNTRYCODE = ''
 ```
 
+Telegram channel message history tracking
+```
+target_url= "https://t.me/..." # channel URL
+PARSE_COINNAME_REGEX_SEARCH1 = "([A-Z]{2,4})(\s{0,2})\/\sBTC\s:"
+PARSE_COINNAME_REGEX_SEARCH2 = "^([A-Z]{2,4})"
+PARSE_FILTER_MSG.append("/ BTC :")
+PARSE_FILTER_MSG.append("BUY : ")
+```
