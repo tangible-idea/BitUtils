@@ -4,6 +4,8 @@
 # BitUtils
 Systematic coin price notifier+trading tool via python
 
+![alt text](softinus.com/files/bitutil_explanation1.png)
+
 Installation
 ------------
 * Telegram-bot
