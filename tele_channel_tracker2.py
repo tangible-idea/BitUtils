@@ -8,11 +8,18 @@ from telethon import TelegramClient
 
 from threading import Timer
 
-# pip install python-telegram-bot
-from TDD import telegram_tdd
+### pip install python-telegram-bot
+#from TDD import telegram_tdd
 
-#pip install git+https://github.com/ericsomdahl/python-bittrex.git
-from API import bittrex_api
+###pip install git+https://github.com/ericsomdahl/python-bittrex.git
+#from API import bittrex_api
+
+# pip install python-telegram-bot
+from TDD.telegram_tdd import sendTelegramMsg
+
+# pip install git+https://github.com/ericsomdahl/python-bittrex.git
+from API.bittrex_api import *
+
 
 import Config
 
@@ -53,29 +60,38 @@ def ReadPublicChannelChatHistory(messages):
         text = '[{}:{}] (ID={}) {}:{}'.format(msg.date.hour, msg.date.minute, msg.id, Forwarded, content)
         
         # ignore forwared messages
-        if Forwarded != None and "(direct)" in Forwarded:
-            texts.append(text)
+        #if Forwarded != None and "(direct)" in Forwarded:
+        texts.append(text)
     return texts
 
 def TrackingTargetChannel(URL, count):
-    target_channel  = client.get_entity(URL)
-    total_count, messages, senders = client.get_message_history(target_channel, count)
-    texts= ReadPublicChannelChatHistory(messages)
+    try:
+        target_channel  = client.get_entity(URL)
+        total_count, messages, senders = client.get_message_history(target_channel, count)
+        texts= ReadPublicChannelChatHistory(messages)
     
-    if len(texts) is 1:
-        return texts[0]
-    else:
-        return None
-
+        if len(texts) is 1:
+            return texts[0]
+        else:
+            return None
+    except Exception as e:
+        sendTelegramMsg(str(e))
+    finally:
+        pass
 
 def SellAgain():
     global E_MODE
     global PURCHARSED_COIN_NAME
 
     print("SellAgain()")
+    if PURCHARSED_COIN_NAME == "":
+        sendTelegramMsg("매도를 시도하려 했으나, 구매한 코인 기록이 없어 시도하지 못함.")
+        return
+
     targetCoinName, Quantity_request, Price_request= SellTargetCoinWhichIHave("BTC", PURCHARSED_COIN_NAME, 1)
-    sendTelegramMsg("타이머가 지나서 매수했던 코인 전량 매도를 시도했음. [" + targetCoinName + "]" + str(Quantity_request) + "개 --> [BTC], 요청가격 : {0:.8f}".format(Price_request))
+    sendTelegramMsg("타이머가 지나서 매수했던 코인 전량 매도를 시도했음. \n[" + targetCoinName + "]" + str(Quantity_request) + "개 --> [BTC],\n요청가격 : {0:.8f}".format(Price_request))
     E_MODE = 0      # change mode into TRACKING
+    PURCHARSED_COIN_NAME= ""
 
 
 def FoundLeadingSignal(TargetCoinName):
@@ -83,42 +99,99 @@ def FoundLeadingSignal(TargetCoinName):
     global PURCHARSED_COIN_NAME
     # buy 95% of current balance at bittrex
     affordable, savedRate= HowManyCoinYouCanBuyWithMyBalance("BTC", TargetCoinName)
-    _targetCoinName, Quantity_request, Price_request= BuyLimit_PercentageOfMyBalance("BTC", TargetCoinName, affordable, savedRate, 0.95)
+    _targetCoinName, Quantity_request, Price_request, err_msg= BuyLimit_PercentageOfMyBalance("BTC", TargetCoinName, affordable, savedRate, 0.95)
 
     if savedRate == None:
-        sendTelegramMsg("[" + _targetCoinName +"]코인을 구매하는데 실패했음. bittrex에 없는 코인일 가능성 확인바람.")
+        sendTelegramMsg("[" + _targetCoinName +"]코인을 구매하는데 실패했음. \nbittrex에 없는 코인일 가능성 확인바람.")
     else:
         if Quantity_request == 0:
-            sendTelegramMsg("[" + _targetCoinName +"]코인을 구매하는데 실패했음. fillrate 확인바람. 그래도 sell limit 시도는 함.")
+            sendTelegramMsg("[" + _targetCoinName +"]코인을 구매하는데 실패했음. \n에러명 : " + err_msg + "\n그래도 sell limit 시도는 함.")
         else:
             PURCHARSED_COIN_NAME = _targetCoinName # save purchased name of coin
-            sendTelegramMsg("[" + _targetCoinName +"]코인을 " + str(Quantity_request) +"만큼 매수 시도했음. 매수 시도 가격 : {0:.8f}".format(Price_request))
+            sendTelegramMsg("[" + _targetCoinName +"]코인을 " + str(Quantity_request) +"만큼 매수 시도했음. \n매수 시도 가격 : {0:.8f}".format(Price_request))
     
         # normally, 80secs to 100secs go high
-        t = Timer(95, SellAgain)
+        t = Timer(90, SellAgain)
         t.start() # after x seconds, sell again
 
-
+        
 def NewMessageFound(msg):
-    p = re.compile('\$([A-Z]{3,5})\w+')
+    global PARSE_COINNAME_REGEX_SEARCH1
+    global PARSE_COINNAME_REGEX_SEARCH2
+    global PARSE_FILTER_MSG
+    print("new msg : " + msg)
+    print("\tPARSE_COINNAME_REGEX_SEARCH : " + PARSE_COINNAME_REGEX_SEARCH1)
+    print("\tPARSE_COINNAME_REGEX_SUB : " + PARSE_COINNAME_REGEX_SEARCH2)
+    print("\tPARSE_FILTER_MSG : " + str(PARSE_FILTER_MSG))
+
+    p = re.compile(PARSE_COINNAME_REGEX_SEARCH1)
     searched= p.search(msg)
 
     if searched == None:
-        print("New message but no coin name found")
+        print("New message but no coin name found.")        
     else:
-        TargetCoinName = searched.group().replace('$', '')
+        # searching regex and subtraction regex are same. (no need to do twice.)
+        #if PARSE_COINNAME_REGEX_SEARCH == PARSE_COINNAME_REGEX_SUB:
+            #TargetCoinName = searched.group()
+        #else:
+        searched_temp= searched.group()
+        p2 = re.compile(PARSE_COINNAME_REGEX_SEARCH2)
+        searched2= p2.search(searched_temp)
+
+        TargetCoinName= searched2.group()
+        #TargetCoinName = re.sub(PARSE_COINNAME_REGEX_SUB, '', searched_temp)
+
+        # filter
+        #TargetCoinName = TargetCoinName.replace('$', '')
         #print(TargetCoinName)
 
-        if "현재가" in msg and "매수" in msg and "추천" in msg:
+        bFoundLeadingSingal = True
+        for customFilter in PARSE_FILTER_MSG:
+            if customFilter not in msg:
+                bFoundLeadingSingal = False
+
+        if bFoundLeadingSingal:
             print("Found leading signal! : " + TargetCoinName)
             FoundLeadingSignal(TargetCoinName)
         else:
             print("Found coin name, but not a leading signal.")
 
+            
 prev_text =""
 last_text =""
+target_url=""
+
+PARSE_COINNAME_REGEX_SEARCH1 = ""
+PARSE_COINNAME_REGEX_SEARCH2 = ""
+PARSE_FILTER_MSG = []
+
+print("Please select your target telegram channel.")
+print("1. https://t.me/altcoinstrike")
+print("2. https://t.me/cryptomadcap")
+print("3. https://t.me/markjuju (testing purpose; add your own)")
+user_selection_target = int(input('Number: '))
+if user_selection_target == 1:
+    target_url= "https://t.me/altcoinstrike"
+    PARSE_COINNAME_REGEX_SEARCH1 = "\$([A-Z]{2,4})\w+"
+    PARSE_COINNAME_REGEX_SEARCH2 = "([A-Z]{2,4})"
+    PARSE_FILTER_MSG.append("매수")
+    PARSE_FILTER_MSG.append("추천")
+elif user_selection_target == 2:
+    target_url= "https://t.me/cryptomadcap"
+    PARSE_COINNAME_REGEX_SEARCH1 = "([A-Z]{2,4})(\s{0,2})\/\sBTC\s:"
+    PARSE_COINNAME_REGEX_SEARCH2 = "^([A-Z]{2,4})"
+    PARSE_FILTER_MSG.append("/ BTC :")
+    PARSE_FILTER_MSG.append("BUY : ")
+else:
+    target_url= "https://t.me/INPUT_YOUR_CHANNEL_URL_FOR_TESTING_PURPOSE"
+    PARSE_COINNAME_REGEX_SEARCH1 = "([A-Z]{2,4})(\s{0,2})\/\sBTC\s:"
+    PARSE_COINNAME_REGEX_SEARCH2 = "^([A-Z]{2,4})"
+    PARSE_FILTER_MSG.append("/ BTC :")
+    PARSE_FILTER_MSG.append("BUY : ")
+
+
 while True:    
-    last_text= TrackingTargetChannel(Config.TRACKING_CHANNEL, 1)
+    last_text= TrackingTargetChannel(target_url, 1)
     
     if(last_text is None):
         print("ignore forwarded message...")
@@ -129,17 +202,3 @@ while True:
 
     prev_text= last_text    
     sleep(2)
-        
-## Retrieve the top 10 dialogs
-## Entities represent the user, chat or channel
-## corresponding to the dialog on the same index
-#dialogs, entities = client.get_dialogs(10)
-
-## Display them, 'i'
-#for i, entity in enumerate(entities, start=1):
-#	print('{}. {}'.format(i, get_display_name(entity)))
-
-#for e in entities:
-#	if get_display_name(e) == "Alt Coin Strike": # room name (id:1127961913)
-#		total_count, messages, senders = client.get_message_history(e, 10)
-#		ReadPublicChannelChatHistory(messages)

@@ -2,8 +2,10 @@
 #-*- coding: utf-8 -*-
 import telegram
 import Config
-bot = telegram.Bot(token=Config.TELEGRAM_CLIENT_TOKEN)
 
-chat_id = bot.getUpdates()[-1].message.chat.id
+TELE_BOT = telegram.Bot(token=Config.TELEGRAM_CLIENT_TOKEN)
 
-#bot.sendMessage(chat_id=chat_id, text='안녕! 난 주주봇이야')
+TELE_CHAT_ID = TELE_BOT.getUpdates()[-1].message.chat.id
+
+def sendTelegramMsg(msg):
+    TELE_BOT.sendMessage(chat_id=TELE_CHAT_ID, text= msg)

@@ -41,6 +41,17 @@ def getTickerBid(tradeCoin, targetCoinName):
 	else:
 		return None
 
+def getTickerMiddleAskAndBid(tradeCoin, targetCoinName):
+	market = tradeCoin + '-' +targetCoinName
+	ticker_ = my_bittrex.get_marketsummary(market)
+
+	if ticker_["success"] is True:
+		askPrice= ticker_["result"][0]["Ask"]
+		bidPrice= ticker_["result"][0]["Bid"]
+		return (askPrice + bidPrice) / 2
+	else:
+		return None
+
 # def getRateLastOf(tradeCoin, targetCoinName):
 # 	market = tradeCoin + '-' +targetCoinName
 # 	summary_ = my_bittrex.get_ticker(market)
@@ -100,13 +111,14 @@ def BuyLimit_PercentageOfMyBalance(tradeCoin, targetCoinName, Quantity, rate, pe
 
 	if buy_result["success"] is True:
 		print ("Successful to request purchase " + str(Quantity_request) + " of " + targetCoinName +" coins.")
-		return targetCoinName, Quantity_request, rate
+		return targetCoinName, Quantity_request, rate, ''
 	else:
+		#if buy_result["message"] == "MIN_TRADE_REQUIREMENT_NOT_MET":
 		print ("Failed to request purchase " + str(Quantity_request) + " of " + targetCoinName +" coins.")
-		return targetCoinName, 0, rate
+		return targetCoinName, 0, rate, buy_result["message"]
 
 def SellTargetCoinWhichIHave(tradeCoin, targetCoinName, percentage):
-	lastRate= getTickerBid(tradeCoin, targetCoinName)
+	sellingRate= getTickerMiddleAskAndBid(tradeCoin, targetCoinName)
 	howmany = HowManyCoinYouHave(targetCoinName)
 	#print howmany 
 	if howmany is None: # if there's no coin to sell back
@@ -115,14 +127,14 @@ def SellTargetCoinWhichIHave(tradeCoin, targetCoinName, percentage):
 	Quantity_request= howmany * percentage
 
 	market = tradeCoin + '-' +targetCoinName
-	sell_result= my_bittrex.sell_limit(market, Quantity_request, lastRate)
+	sell_result= my_bittrex.sell_limit(market, Quantity_request, sellingRate)
 
 	if sell_result["success"] is True:
 		print ("Successful to request selling order " + str(Quantity_request) + " of " + targetCoinName +" coins.")
-		return targetCoinName, Quantity_request, lastRate
+		return targetCoinName, Quantity_request, sellingRate
 	else:
 		print ("Failed to request selling order " + str(Quantity_request) + " of " + targetCoinName +" coins.")
-		return targetCoinName, 0, lastRate
+		return targetCoinName, 0, sellingRate
 
 #print getTickerBid(DEFAULT_COIN, 'GBYTE')
 #print getTickerAsk(DEFAULT_COIN, 'GBYTE')

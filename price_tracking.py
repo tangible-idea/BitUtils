@@ -131,8 +131,8 @@ def sendSMS(msg):
     ## 4 params(to, from, type, text) are mandatory. must be filled
     params = dict()
     params['type'] = 'sms' # Message type ( sms, lms, mms, ata )
-    params['to'] = '01026696123' # Recipients Number '01000000000,01000000001'
-    params['from'] = '01026696123' # Sender number
+    params['to'] = '' # Recipients Number '01000000000,01000000001'
+    params['from'] = '' # Sender number
     params['text'] = msg # Message
 
     cool = Message(api_key, api_secret)
