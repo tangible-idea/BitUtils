@@ -1,5 +1,5 @@
-[![python](https://img.shields.io/badge/python-2.7%20%26%203-blue.svg)
-![licence](https://img.shields.io/badge/licence-GPL%20v2-blue.svg)]
+![python](https://img.shields.io/badge/python-3.x-blue.svg)
+![licence](https://img.shields.io/badge/license-MIT-blue.svg)
 
 # BitUtils
 Systematic coin price notifier+trading tool via python
