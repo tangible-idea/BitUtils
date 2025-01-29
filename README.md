@@ -4,7 +4,7 @@
 # BitUtils
 Systematic coin price notifier+trading tool via python
 
-![bitutil python main screen](http://softinus.com/files/bitutil_explanation1.png)
+<img width="543" alt="Screenshot 2025-01-29 at 19 13 45" src="https://github.com/user-attachments/assets/6aad627a-0864-4658-b26e-6cd7921b1f3f" />
 
 Installation
 ------------
