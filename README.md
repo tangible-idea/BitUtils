@@ -15,7 +15,7 @@ pip install python-telegram-bot
 
 * Telethon
 
-In order to scarp chat history from public telegram channel
+To scarp chat history from public telegram channel
 
 Clone this repository:
 ```
@@ -29,12 +29,12 @@ Clone this repository:
 pip install git+https://github.com/ericsomdahl/python-bittrex.git
 ```
 
-* Selenium (for scraping data from upbit)
+* Selenium (for scraping data from Upbit)
 ```
 pip install selenium
 ```
 
-* BeautifulSoup4 (for scraping data from upbit)
+* BeautifulSoup4 (for scraping data from Upbit)
 
 Clone this repository:
 ```
@@ -81,11 +81,11 @@ TELEGRAM_BOT_API_ID = ''
 TELEGRAM_BOT_API_HASH = ''
 ```
 
-Phone number is for signing in as a Telegram user
+The phone number is for signing in as a Telegram user
 ```
 PHONE_NUMBER = '+00...'
 ```
-Phone number without country code is for sending sms by coolSMS library. (optional)
+Fill `PHONE_NUMBER_WO_COUNTRYCODE` to send sms message through coolSMS library. (optional)
 ```
 PHONE_NUMBER_WO_COUNTRYCODE = ''
 ```
